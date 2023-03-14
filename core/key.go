@@ -7,6 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/ethereum/go-ethereum/common"
 	evmhd "github.com/evmos/ethermint/crypto/hd"
 	"github.com/tyler-smith/go-bip39"
 )
@@ -59,10 +60,12 @@ func (k *SecretKey) CreateAccountFromPriv(priv string) (*CosmosWallet, error) {
 	}
 	privKey := algo.Generate()(privKeyBytes)
 	address := sdk.AccAddress(privKey.PubKey().Address())
+	ethAddress := common.BytesToAddress(address.Bytes()).String()
 	return &CosmosWallet{
 		priv:       privKey,
 		PrivateKey: priv,
 		PublicKey:  hex.EncodeToString(privKey.PubKey().Bytes()),
+		EthAddress: ethAddress,
 		Address:    address.String()}, nil
 }
 
@@ -76,10 +79,12 @@ type CosmosWallet struct {
 	Address    string        `json:"address"`
 	PublicKey  string        `json:"publickey"`
 	PrivateKey string        `json:"privatekey"`
+	EthAddress string        `json:"eth_address"`
 	priv       types.PrivKey `json:"priv"`
 }
 
 func (this *CosmosWallet) Print() {
-	fmt.Printf("Address:\t %s \n", this.Address)
+	fmt.Printf("CBC Address:\t %s \n", this.Address)
+	fmt.Printf("ETH Address:\t %s \n", this.EthAddress)
 	fmt.Printf("PrivateKey:\t %s \n", this.PrivateKey)
 }

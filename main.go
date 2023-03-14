@@ -1,8 +1,8 @@
 package main
 
 import (
-	"freemasonry.cc/wallet/cmd"
-	"freemasonry.cc/wallet/core"
+	"freemasonry.cc/fm-cli/cmd"
+	"freemasonry.cc/fm-cli/core"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 )
@@ -10,14 +10,17 @@ import (
 func main() {
 	setupConfig()
 	rootCmd := &cobra.Command{
-		Use:   "wallet",
-		Short: "fm wallet util",
+		Use:   "client",
+		Short: "fm client util",
 		Run: func(cmd *cobra.Command, args []string) {
 			cmd.Help()
 		},
 	}
 	rootCmd.AddCommand(cmd.CreateCmd())
 	rootCmd.AddCommand(cmd.ViewCmd())
+	rootCmd.AddCommand(cmd.TransferCmd())
+	rootCmd.AddCommand(cmd.BalanceCmd())
+	rootCmd.AddCommand(cmd.TxCmd())
 	rootCmd.Execute()
 }
 

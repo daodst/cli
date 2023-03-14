@@ -2,18 +2,18 @@ package cmd
 
 import (
 	"fmt"
-	"freemasonry.cc/wallet/core"
+	"freemasonry.cc/fm-cli/core"
 	"github.com/spf13/cobra"
 )
 
 func ViewCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "import",
-		Short: "import account",
+		Use:   "view",
+		Short: "view account",
 		Run: func(cmd *cobra.Command, args []string) {
 			accC := core.NewAccountClient()
 
-			seed := cmd.Flag("seed").Value.String() //dpos名称
+			seed := cmd.Flag("seed").Value.String() //dpos
 			privateKey := cmd.Flag("pk").Value.String()
 
 			if seed == "" && privateKey == "" {

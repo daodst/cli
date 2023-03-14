@@ -6,6 +6,22 @@ import (
 	ethermint "github.com/evmos/ethermint/types"
 )
 
+var (
+	ChainID = "sc_8888-1"
+
+	CosmosApiPort = "1317"
+
+	RpcPort = "26657"
+
+	P2pPort = "26656"
+
+	EvmRpcURL = "http://localhost:8545"
+
+	ServerURL = "http://127.0.0.1:" + CosmosApiPort
+
+	RpcURL = "tcp://127.0.0.1:" + RpcPort
+)
+
 const (
 	// Bech32Prefix defines the Bech32 prefix used for EthAccounts
 	Bech32Prefix = "dex"
@@ -29,6 +45,8 @@ const (
 	DisplayDenom = "tt"
 	// BaseDenom defines to the default denomination used in Evmos (staking, EVM, governance, etc.)
 	BaseDenom = "att"
+
+	GovDenom = "fm"
 )
 
 // SetBech32Prefixes sets the global prefixes to be used when serializing addresses and public keys to Bech32 strings.
@@ -50,7 +68,6 @@ func RegisterDenoms() {
 	if err := sdk.RegisterDenom(DisplayDenom, sdk.OneDec()); err != nil {
 		panic(err)
 	}
-
 	if err := sdk.RegisterDenom(BaseDenom, sdk.NewDecWithPrec(1, ethermint.BaseDenomUnit)); err != nil {
 		panic(err)
 	}
