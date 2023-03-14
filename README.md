@@ -24,7 +24,7 @@ go mod tidy
 `fm-cli transfer 0B9A99EDA4B4C12323C4C1EB1210E98E8FE22FE1AE3543CACD044825CC9A793B  dex10436g09cfa2nz2k6yphzj9qs9u93qtvvkkftur  dex1va8aaeystat4twpy70ns7235pxwczg0698twv4  100tt,100fm`
 
 ### 5.query tx
-`fm-cli tx 7CCF00A97EACBBF73D72E2F9BD5D5CA13F63761753C535170E991FBA5E0C1E67 --node tcp://3.35.42.193:26657`
+`fm-cli tx 7CCF00A97EACBBF73D72E2F9BD5D5CA13F63761753C535170E991FBA5E0C1E67 --node tcp://ip:26657`
 
 ### 6.query balance
 `fm-cli balance  dex1cnty9am46c97s8w9e54xaxztl9g68u4f8njjeu --node tcp://ip:26657`
