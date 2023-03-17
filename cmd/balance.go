@@ -3,7 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"freemasonry.cc/fm-cli/core"
+	"freemasonry.cc/cli/core"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/spf13/cobra"
@@ -13,7 +13,7 @@ func BalanceCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "balance [account]",
 		Short: "query account balance",
-		Args:  cobra.MinimumNArgs(1),
+		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			node := cmd.Flag("node").Value.String()
 			if node != "" {
@@ -22,7 +22,6 @@ func BalanceCmd() *cobra.Command {
 			denom := core.ParseBaseCoin(cmd.Flag("denom").Value.String())
 			balance, err := queryBalance(args[0], denom)
 			if err != nil {
-				fmt.Println("-----------------------------------------------------------")
 				fmt.Println("error query balance:", err.Error())
 				return
 			}

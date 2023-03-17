@@ -4,15 +4,23 @@ import (
 	"bytes"
 	"context"
 	"encoding/hex"
+	"fmt"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	txSigning "github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
 	"github.com/cosmos/cosmos-sdk/x/auth/signing"
+	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethclient"
 	evmhd "github.com/evmos/ethermint/crypto/hd"
 	"github.com/spf13/pflag"
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
+	"math/big"
 	"regexp"
 	"strings"
 )
@@ -167,4 +175,87 @@ func isTxNotFoundError(errContent string) (ok bool) {
 	} else {
 		return false
 	}
+}
+
+func LocalSendTx(nonce, gasLimit uint64, value, gasPrice, chainId *big.Int, toAddress, data, privateKey, rawUrl string) {
+	to := common.HexToAddress(toAddress)
+	dataByte, _ := hex.DecodeString(data)
+	rawTx := &types.LegacyTx{
+		Nonce:    nonce,
+		To:       &to,
+		Value:    value,
+		Gas:      gasLimit,
+		GasPrice: gasPrice,
+		Data:     dataByte,
+	}
+	tx := types.NewTx(rawTx)
+	// 、
+	signer := types.NewEIP155Signer(chainId)
+	key, err := crypto.HexToECDSA(privateKey)
+	if err != nil {
+		fmt.Println("error crypto.HexToECDSA failed: ", err.Error())
+		return
+	}
+	sigTransaction, err := types.SignTx(tx, signer, key)
+	if err != nil {
+		fmt.Println("error types.SignTx failed: ", err.Error())
+		return
+	}
+	// 、
+	ethClient, err := ethclient.Dial(rawUrl)
+	if err != nil {
+		fmt.Println("error ethClient.Dial failed: ", err.Error())
+		return
+	}
+	err = ethClient.SendTransaction(context.Background(), sigTransaction)
+	if err != nil {
+		fmt.Println("error ethClient.SendTransaction failed: ", err.Error())
+		return
+	}
+	fmt.Println(fmt.Sprintf("{\"hash\":\"%s\"}", sigTransaction.Hash().Hex()))
+}
+
+func EthGasPrice(rawUrl string) (*big.Int, error) {
+	ethClient, err := ethclient.Dial(rawUrl)
+	if err != nil {
+		fmt.Println("ethClient.Dial failed: ", err.Error())
+		return nil, err
+	}
+	return ethClient.SuggestGasPrice(context.Background())
+}
+
+func EthChainId(rawUrl string) (*big.Int, error) {
+	ethClient, err := ethclient.Dial(rawUrl)
+	if err != nil {
+		fmt.Println("ethClient.Dial failed: ", err.Error())
+		return nil, err
+	}
+	return ethClient.ChainID(context.Background())
+}
+
+func EthTransactionReceipt(hash, rawUrl string) (*types.Receipt, error) {
+	ethClient, err := ethclient.Dial(rawUrl)
+	if err != nil {
+		fmt.Println("ethClient.Dial failed: ", err.Error())
+		return nil, err
+	}
+	hashAddress := common.HexToHash(hash)
+
+	return ethClient.TransactionReceipt(context.Background(), hashAddress)
+}
+
+func EthCallContract(fromAddress, toAddress, rawUrl string, data []byte) (hexutil.Bytes, error) {
+	from := common.HexToAddress(fromAddress)
+	to := common.HexToAddress(toAddress)
+	ethClient, err := ethclient.Dial(rawUrl)
+	if err != nil {
+		fmt.Println("ethClient.Dial failed: ", err.Error())
+		return nil, err
+	}
+	blockNum, err := ethClient.BlockNumber(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	msg := ethereum.CallMsg{From: from, To: &to, Data: data}
+	return ethClient.CallContract(context.Background(), msg, big.NewInt(int64(blockNum)))
 }

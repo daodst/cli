@@ -3,7 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"freemasonry.cc/fm-cli/core"
+	"freemasonry.cc/cli/core"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankTypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/spf13/cobra"
@@ -15,11 +15,11 @@ func TransferCmd() *cobra.Command {
 		Use:   "transfer [pk] [from] [to] [amount]",
 		Short: "transfer",
 		Long: fmt.Sprintf(`Example:
-		fm-cli transfer 0B9A99EDA4B4C12323C4C1EB1210E98E8FE22FE1AE3543CACD044825CC9A793B  dex10436g09cfa2nz2k6yphzj9qs9u93qtvvkkftur  dex1va8aaeystat4twpy70ns7235pxwczg0698twv4  100tt,100fm
+		cli transfer 0B9A99EDA4B4C12323C4C1EB1210E98E8FE22FE1AE3543CACD044825CC9A793B  dex10436g09cfa2nz2k6yphzj9qs9u93qtvvkkftur  dex1va8aaeystat4twpy70ns7235pxwczg0698twv4  100dst,100fm
 		
-		transfer amount (eg:1tt or 1tt,1fm)
+		transfer amount (eg:1dst or 1dst,1fm)
 `),
-		Args: cobra.MinimumNArgs(4),
+		Args: cobra.ExactArgs(4),
 		Run: func(cmd *cobra.Command, args []string) {
 			node := cmd.Flag("node").Value.String()
 			if node != "" {
@@ -28,7 +28,6 @@ func TransferCmd() *cobra.Command {
 			memo := cmd.Flag("memo").Value.String()
 			resp, err := transfer(args[1], args[2], args[3], memo, args[0])
 			if err != nil {
-				fmt.Println("-----------------------------------------------------------")
 				fmt.Println("error transfer:", err.Error())
 				return
 			}

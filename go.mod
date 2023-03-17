@@ -1,4 +1,4 @@
-module freemasonry.cc/fm-cli
+module freemasonry.cc/cli
 
 go 1.18
 

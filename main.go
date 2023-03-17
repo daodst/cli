@@ -1,8 +1,8 @@
 package main
 
 import (
-	"freemasonry.cc/fm-cli/cmd"
-	"freemasonry.cc/fm-cli/core"
+	"freemasonry.cc/cli/cmd"
+	"freemasonry.cc/cli/core"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 )
@@ -11,7 +11,7 @@ func main() {
 	setupConfig()
 	rootCmd := &cobra.Command{
 		Use:   "client",
-		Short: "fm client util",
+		Short: "client util",
 		Run: func(cmd *cobra.Command, args []string) {
 			cmd.Help()
 		},
@@ -21,6 +21,7 @@ func main() {
 	rootCmd.AddCommand(cmd.TransferCmd())
 	rootCmd.AddCommand(cmd.BalanceCmd())
 	rootCmd.AddCommand(cmd.TxCmd())
+	rootCmd.AddCommand(cmd.EthCmd())
 	rootCmd.Execute()
 }
 

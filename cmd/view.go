@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"freemasonry.cc/fm-cli/core"
+	"freemasonry.cc/cli/core"
 	"github.com/spf13/cobra"
 )
 
